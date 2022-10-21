@@ -1,6 +1,7 @@
 #ifndef INT64_RESULT
 #define INT64_RESULT
 #include <inttypes.h>
+#include <stdbool.h>
 
 #define NONE_INT64 (struct Int64Result) { .valid = false }
 
