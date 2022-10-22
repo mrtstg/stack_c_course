@@ -18,8 +18,26 @@ build-tests: $(TESTS_BIN_DIR)
 launch-tests: $(TESTS_BIN_DIR)/* $(TESTS_RESULTS_DIR)
 	@for file in $(notdir $(shell ls -1 "$(TESTS_BIN_DIR)")); do \
 		echo "Executing" $$file; \
-		$(TESTS_BIN_DIR)$$file > $(TESTS_RESULTS_DIR)$$file.txt; \
+		$(TESTS_BIN_DIR)$$file > $(TESTS_RESULTS_DIR)$$file.txt || true; \
 	done;
+
+display-tests: $(TESTS_RESULTS_DIR)/*
+	@echo "------------------PASSED------------------"
+	@for line in $(shell grep -s PASS $(TESTS_RESULTS_DIR)*.txt); do \
+		echo $$line; \
+	done;
+	@echo "------------------IGNORE------------------"
+	@for line in $(shell grep -s IGNORE $(TESTS_RESULTS_DIR)*.txt); do \
+		echo $$line; \
+	done;
+	@echo "-------------------FAIL-------------------"
+	@for line in $(shell grep -s FAIL $(TESTS_RESULTS_DIR)*.txt); do \
+		echo $$line; \
+	done;
+	@echo "DONE"
+
+test: $(TEST_BIN_DIR) $(TESTS_RESULTS_DIR)
+	make build-tests && make launch-tests && make display-tests
 
 run: lib/ lib/*.c main.c
 	make build && ./target/bin
