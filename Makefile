@@ -6,6 +6,15 @@ TESTS_FILES=$(shell ls -1 "$(TESTS_DIR)$(TESTS_NAME)")
 TESTS_BIN_DIR=target/tests/
 TESTS_RESULTS_DIR=target/tests_res/
 
+pull-unity:
+	git clone https://github.com/ThrowTheSwitch/Unity
+	mkdir -p unity/
+	mv Unity/src/* unity/
+	rm -rf Unity
+
+prepare:
+	mkdir -p unity/ mkdir -p $(TESTS_BIN_DIR) && mkdir -p $(TESTS_RESULTS_DIR) && mkdir -p $(TESTS_DIR)
+
 build: lib/ lib/*.c main.c target/
 	gcc main.c lib/*.c -o target/bin
 
@@ -37,7 +46,7 @@ display-tests: $(TESTS_RESULTS_DIR)/*
 	@echo "DONE"
 
 test: $(TEST_BIN_DIR) $(TESTS_RESULTS_DIR)
-	make build-tests && make launch-tests && make display-tests
+	make prepare && make build-tests && make launch-tests && make display-tests
 
 run: lib/ lib/*.c main.c
-	make build && ./target/bin
+	make prepare && make build && ./target/bin
